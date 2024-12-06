@@ -43,6 +43,50 @@ async function run() {
     });
     app.get("/equipments", async (req, res) => {
       try {
+        const equipments = await client.db("sportsEquipmentDB").collection("equipments").find().toArray();
+        res.json(equipments);
+      } catch (error) {
+        res.status(500).send("Error fetching data");
+      }
+    });
+
+    app.get("/equipments/:id", async (req, res) => {
+      const { id } = req.params;
+    
+      try {
+        const equipment = await equipmentCollection.findOne({ _id: new ObjectId(id) });
+        if (!equipment) {
+          return res.status(404).json({ message: "Equipment not found" });
+        }
+        res.status(200).json(equipment);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to fetch equipment", error: error.message });
+      }
+    });
+    
+    app.put("/equipments/:id", async (req, res) => {
+      const { id } = req.params;
+      const updatedEquipment = req.body;
+    
+      try {
+        const result = await equipmentCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updatedEquipment }
+        );
+    
+        if (result.matchedCount === 0) {
+          return res.status(404).json({ message: "Equipment not found" });
+        }
+    
+        res.status(200).json({ modifiedCount: result.modifiedCount });
+      } catch (error) {
+        res.status(500).json({ message: "Failed to update equipment", error: error.message });
+      }
+    });
+    
+    
+    app.get("/equipments", async (req, res) => {
+      try {
         const database = client.db("sportsEquipmentDB");
         const equipmentCollection = database.collection("equipments");
     
@@ -55,6 +99,16 @@ async function run() {
         res.status(500).json({ message: "Failed to fetch equipment data", error: error.message });
       }
     });
+    app.get("/equipments/:id", async (req, res) => {
+      const categoryId = req.params.id;
+      const result = await client
+        .db("sportsDB")
+        .collection("equipments")
+        .find({ _id }) 
+        .toArray();
+      res.send(result);
+    });
+    
 
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);

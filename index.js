@@ -42,28 +42,19 @@ async function run() {
       }
     });
 
-    // Get All Equipments (GET)
     app.get("/equipments", async (req, res) => {
+      const { userEmail } = req.query; // Extract userEmail from query params
+    
       try {
-        const equipments = await equipmentCollection.find().toArray();
-        res.status(200).json(equipments);
+        const query = userEmail ? { userEmail } : {}; // Filter by userEmail if provided
+        const equipments = await equipmentCollection.find(query).toArray(); // Query filtered data
+        res.status(200).json(equipments); // Return the data
       } catch (error) {
-        res.status(500).json({ message: "Failed to fetch equipment data", error: error.message });
+        res.status(500).json({ message: "Failed to fetch equipment", error: error.message });
       }
     });
-
-    app.get("/equipments", async (req, res) => {
-      const { userId } = req.query; // Get userId from query params
-  
-      try {
-          const query = userId ? { userId } : {}; // Filter by userId if provided
-          const equipments = await equipmentCollection.find(query).toArray();
-          res.status(200).json(equipments);
-      } catch (error) {
-          res.status(500).json({ message: "Failed to fetch equipment", error: error.message });
-      }
-  });
-  
+    
+    
 
     // Get Equipment by ID (GET)
     app.get("/equipments/:id", async (req, res) => {

@@ -52,6 +52,19 @@ async function run() {
       }
     });
 
+    app.get("/equipments", async (req, res) => {
+      const { userId } = req.query; // Get userId from query params
+  
+      try {
+          const query = userId ? { userId } : {}; // Filter by userId if provided
+          const equipments = await equipmentCollection.find(query).toArray();
+          res.status(200).json(equipments);
+      } catch (error) {
+          res.status(500).json({ message: "Failed to fetch equipment", error: error.message });
+      }
+  });
+  
+
     // Get Equipment by ID (GET)
     app.get("/equipments/:id", async (req, res) => {
       const { id } = req.params;

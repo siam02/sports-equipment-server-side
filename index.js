@@ -21,13 +21,13 @@ const client = new MongoClient(uri, {
   },
 });
 
-// Connect to MongoDB and define routes
+
 async function run() {
   try {
     await client.connect();
     console.log("Successfully connected to MongoDB!");
 
-    // Define the database and collection
+    // database and collection
     const database = client.db("sportsEquipmentDB");
     const equipmentCollection = database.collection("equipments");
 
